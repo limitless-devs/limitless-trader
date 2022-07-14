@@ -1,15 +1,10 @@
 import {
     createProgramConnection as createProgramLimitless,
-    getAllMarkets,
     deNormalize,
-    createMarket,
     getMarket,
-    getMinimumQuantity,
     buy,
     sell,
     calculateQuantityFromBuyCost,
-    calculateQuantityFromSellProceeds,
-    calculateTotalBuyCost,
     calculateTotalSellProceeds,
 } from 'limitless-api-ts'
 import * as spl from '@solana/spl-token';
@@ -70,7 +65,8 @@ async function run() {
         quoteBal = Number(quoteUser.amount)
         console.log("Minted 10 quote tokens from faucet!")
         let market = await getMarket("LIMITLESS", limitlessProgram, "processed");
-        let isBuy = Math.random() < 0.5;
+        //could oscillate this
+        let isBuy = Math.random() < 0.9;
         if (isBuy) {
             let costNorm = getRandomInt(1_000_000, quoteBal)
             let cost = deNormalize(costNorm, market.quoteDecimals);
@@ -95,7 +91,9 @@ async function run() {
         } else if (!isBuy && baseBal > market.minSize.toNumber()) {
             let quantityNorm = getRandomInt(market.minSize, baseBal)
             let newQ = market.cqd.toNumber() - quantityNorm;
-            let q_available = market.floorPoolSize.toNumber() / market.floorPrice.toNumber();
+            let q_available = ((market.floorPoolSize.toNumber() * (Math.pow(10, market.quoteDecimals))) / market.floorPrice.toNumber());  
+            console.log("qavail", q_available)
+            console.log("qNorm", quantityNorm)          
             if (newQ < market.highestFloorQuantity.toNumber()){
                 //if the sell order goes below the floor price, the order will skip all the liquidity in the quote pool
                 //there is a chance that the floor pool does not have enough liquidity to fill your order, thus we will reduce the size of our order.

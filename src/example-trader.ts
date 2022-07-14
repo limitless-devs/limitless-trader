@@ -11,12 +11,16 @@ import {
     calculateQuantityFromSellProceeds,
     calculateTotalBuyCost,
     calculateTotalSellProceeds,
+    updateLaunchDate,
+    updateFeeDown,
+    transferToFloor,
+    updateFeeReceiveaddress,
 } from 'limitless-api-ts'
 import * as spl from '@solana/spl-token';
 import { Keypair, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import * as anchor from '@project-serum/anchor';
-import { createAccountAndMintFromFaucet } from './utils'
-
+import { createAccountAndMintFromFaucet, createTokenAcoount } from './utils'
+import * as uuid from 'uuid'
 async function run() {
 
     //create program connection
@@ -56,10 +60,10 @@ async function run() {
 
     //create market
     //Note: The limitless ui will only show markets with all caps names and markets with no premint / continious mint (for now)
-    console.log("Creating market..");
-    let currentMarketName = "DANKTANK"
+    let currentMarketName = uuid.v4().slice(0, 6);
+    console.log("Creating market with name", currentMarketName);
     try {
-        //slope of the linear function, quote token decimals (this is fixed), minimum trade size (nomralized)
+        //slope of the linear function, quote token decimals (this is fixed), minimum trade size (normalized)
         let minQ = getMinimumQuantity(1000000, 6, 10000);
         let market = await createMarket({
             marketName: currentMarketName,
@@ -69,19 +73,40 @@ async function run() {
             gradient: 1000000,
             preMint: 0,
             contMint: false,
-            buyFee: 1,
-            sellFee: 1,
-            launchDate: Date.now() / 1000,
+            buyFee: 100,
+            sellFee: 100,
+            launchDate: (Date.now() / 1000) + (60 * 60 * 24),
             feeQuoteTokenAddress: quoteAddress.address,
             userQuoteTokenAddress: quoteAddress.address,
             program: limitlessProgram,
             confirmOpts: { commitment: "finalized" }
         });
         console.log("Created market tx: ", market);
+
+        //update launch date
+        let updateLaunchRes = await updateLaunchDate(new Date(), currentMarketName, limitlessProgram, "confirmed")
+        console.log("Update market launch date tx:", updateLaunchRes)
+        
+        //update fee down
+        let updateBuyFeeDownRes = await updateFeeDown(true, 50, currentMarketName, limitlessProgram, "confirmed")
+        console.log("Update buy fee down tx:", updateBuyFeeDownRes)
+
+        //update sell fee down
+        let updateSellFeeDownRes = await updateFeeDown(false, 1, currentMarketName, limitlessProgram, "confirmed")
+        console.log("Update sell fee down tx:", updateSellFeeDownRes)
+
+        //transfer to floor pool - THIS IS A DONATION - YOU GET NOTHING IN RETURN. 
+        let transferToFloorRes = await transferToFloor(10000, currentMarketName, limitlessProgram, "processed", quoteAddress.address)
+        console.log("Transfer(donate) to floor tx:", transferToFloorRes)
+
+        //change fee receive address
+        let newFeeAddress = await createTokenAcoount(anchorWallet, rpcUrl, confirmOpts)
+        let updateFeeReceiveAddressRes = await updateFeeReceiveaddress(currentMarketName, limitlessProgram, "confirmed", newFeeAddress)
+        console.log("Update fee receive address tx:", updateFeeReceiveAddressRes)
     } catch (error) {
         //incase its already created
         console.log("Market creation failed.. market with that name likely exists.");
-    }
+}
 
     //get market
     let market = await getMarket(currentMarketName, limitlessProgram, "processed");
@@ -115,7 +140,7 @@ async function run() {
     //sell
     console.log("Selling 100 tokens..");
     market = await getMarket(currentMarketName, limitlessProgram, "processed");
-    let sellQty = 100;
+    let sellQty = 25;
     let [sellQtyNormalized, totalProceeds] = calculateTotalSellProceeds(sellQty, 1, market);
     console.log(`Selling ${deNormalize(sellQtyNormalized, market.quoteDecimals)} base tokens for minimum ${deNormalize(totalProceeds, market.quoteDecimals)} quote tokens`);
     let sellRes = await sell({
