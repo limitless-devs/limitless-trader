@@ -54,3 +54,9 @@ export async function mintFromFaucet(
     let mintTx = await mintToken(faucetProgram, faucetCreator, faucetId, quoteAddress, confirmOpts);
     return mintTx;
 }
+
+export function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

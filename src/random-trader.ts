@@ -10,7 +10,7 @@ import {
 import * as spl from '@solana/spl-token';
 import { Keypair, LAMPORTS_PER_SOL, Connection } from "@solana/web3.js";
 import * as anchor from '@project-serum/anchor';
-import { mintFromFaucet } from './utils'
+import { mintFromFaucet, getRandomInt } from './utils'
 
 async function run() {
     //create program connection
@@ -128,12 +128,4 @@ async function run() {
     }
 }
 
-async function trade() {
-
-}
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 run()

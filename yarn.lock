@@ -574,12 +574,12 @@ lazy-ass@1.6.0:
   resolved "https://registry.yarnpkg.com/lazy-ass/-/lazy-ass-1.6.0.tgz#7999655e8646c17f089fdd187d150d3324d54513"
   integrity sha512-cc8oEVoctTvsFZ/Oje/kGnHbpWHYBe8IAJe4C0QNc3t8uM/0Y8+erSz/7Y1ALuXTEZTMvxXwO6YbX1ey3ujiZw==
 
-limitless-api-ts@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/limitless-api-ts/-/limitless-api-ts-1.0.2.tgz#438e2534addb3b1e6a40e02477b58e7222f0e702"
-  integrity sha512-K0LLYWNSwr4yvJz454kLw8Yu7ljOxaij1geFZx0+TYZiXOgAY0MfFNIGFF+hhLIXlSvlP6Cjd2LjWUsChbORAA==
+limitless-api-ts@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/limitless-api-ts/-/limitless-api-ts-1.0.5.tgz#d9da4f3637174a18827dd49d503ccf847d133688"
+  integrity sha512-uNQ8zRerNfqJepDNcz6Zwr5Y1o9y4RNxIMxpGNGSd4eRzyE5oZiEV6jRZ5sL0IPhu8lcpz4WO4Zxe9sOOgiKuw==
   dependencies:
-    "@project-serum/anchor" "^0.25.0-beta.1"
+    "@project-serum/anchor" "^0.25.0"
 
 lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"

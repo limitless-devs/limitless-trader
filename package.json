@@ -3,7 +3,7 @@
     "@project-serum/anchor": "^0.25.0",
     "@solana/spl-token": "^0.2.0",
     "file": "^0.2.2",
-    "limitless-api-ts": "^1.0.2",
+    "limitless-api-ts": "^1.0.5",
     "token-faucet-api-ts": "^1.0.3"
   },
   "name": "limitless-trader",

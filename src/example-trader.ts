@@ -71,7 +71,7 @@ async function run() {
             askOffset: 1000,
             minTradeSize: 10000,
             gradient: 1000000,
-            preMint: 0,
+            preMint: 0, 
             contMint: false,
             buyFee: 100,
             sellFee: 100,
@@ -124,7 +124,9 @@ async function run() {
     console.log("Buying 100 tokens..");
     let buyQty = 100;
     let [buyQtyNormalized, totalCost] = calculateTotalBuyCost(buyQty, 1, market);
-    console.log(`Buying ${deNormalize(buyQtyNormalized, market.quoteDecimals)} base tokens for maximum ${deNormalize(totalCost, market.quoteDecimals)} quote tokens`);
+    console.log(
+    `Buying ${deNormalize(buyQtyNormalized, market.quoteDecimals)} base tokens for maximum ${deNormalize(totalCost, market.quoteDecimals)} quote tokens`
+    );
     let buyRes = await buy({
         marketName: currentMarketName,
         quantity: buyQtyNormalized,
@@ -138,11 +140,12 @@ async function run() {
     console.log(`Bought ${buyRes.quantity} base tokens for ${buyRes.cost} quote tokens! Tx: ${buyRes.txSig}`);
 
     //sell
-    console.log("Selling 100 tokens..");
+    console.log("Selling 25 tokens..");
     market = await getMarket(currentMarketName, limitlessProgram, "processed");
     let sellQty = 25;
     let [sellQtyNormalized, totalProceeds] = calculateTotalSellProceeds(sellQty, 1, market);
-    console.log(`Selling ${deNormalize(sellQtyNormalized, market.quoteDecimals)} base tokens for minimum ${deNormalize(totalProceeds, market.quoteDecimals)} quote tokens`);
+    console.log(
+    `Selling ${deNormalize(sellQtyNormalized, market.quoteDecimals)} base tokens for minimum ${deNormalize(totalProceeds, market.quoteDecimals)} quote tokens`);
     let sellRes = await sell({
         marketName: currentMarketName,
         quantity: sellQtyNormalized,
